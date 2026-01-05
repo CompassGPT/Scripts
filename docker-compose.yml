@@ -27,10 +27,10 @@ services:
       retries: 5
   backend:
     build:
-      context: ./Backend
+      context: ../Backend
     working_dir: /app
     volumes:
-      - ./Backend:/app
+      - ../Backend:/app
     ports:
       - "3000:3000"
     command: npm run start:dev
@@ -42,10 +42,10 @@ services:
         condition: service_healthy
   frontend:
     build:
-      context: ./Frontend
+      context: ../Frontend
     working_dir: /app
     volumes:
-      - ./Frontend:/app
+      - ../Frontend:/app
     ports:
       - "5173:5173"
     command: npm run dev -- --host
@@ -55,10 +55,10 @@ services:
       - backend
   ai:
     build:
-      context: ./AI
+      context: ../AI
     working_dir: /app
     volumes:
-      - ./AI:/app
+      - ../AI:/app
     ports:
       - "5000:5000"
     command: python3 main.py
