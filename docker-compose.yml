@@ -1,9 +1,0 @@
-# This file is deprecated - use docker-compose.dev.yml or docker-compose.prod.yml instead
-# For development:
-#   docker compose -f docker-compose.dev.yml up -d
-# For production:
-#   docker compose -f docker-compose.prod.yml up -d
-
-# Default to development configuration
-include:
-  - docker-compose.dev.yml

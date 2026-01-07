@@ -1,6 +1,7 @@
 services:
   db:
     image: mysql:8
+    container_name: compassgpt-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-compassgpt}
@@ -19,8 +20,8 @@ services:
           "ping",
           "-h",
           "localhost",
-          "-ucompassgpt",
-          "-pcompassgpt",
+          "-u${MYSQL_USER:-compassgpt}",
+          "-p${MYSQL_PASSWORD:-compassgpt}",
         ]
       interval: 30s
       timeout: 10s
@@ -30,6 +31,7 @@ services:
     build:
       context: ../Backend
       dockerfile: Dockerfile
+    container_name: compassgpt-backend
     restart: always
     ports:
       - "3000:3000"
@@ -49,6 +51,7 @@ services:
     build:
       context: ../Frontend
       dockerfile: Dockerfile
+    container_name: compassgpt-frontend
     restart: always
     ports:
       - "80:5173"
@@ -61,6 +64,7 @@ services:
     build:
       context: ../AI
       dockerfile: Dockerfile
+    container_name: compassgpt-ai
     restart: always
     ports:
       - "5000:5000"

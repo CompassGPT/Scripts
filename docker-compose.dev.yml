@@ -1,12 +1,13 @@
 services:
   db:
     image: mysql:8
+    container_name: compassgpt-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: compassgpt
-      MYSQL_DATABASE: compassgpt_dev
-      MYSQL_USER: compassgpt
-      MYSQL_PASSWORD: compassgpt
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-compassgpt}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-compassgpt_dev}
+      MYSQL_USER: ${MYSQL_USER:-compassgpt}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-compassgpt}
     ports:
       - "3306:3306"
     volumes:
@@ -19,8 +20,8 @@ services:
           "ping",
           "-h",
           "localhost",
-          "-ucompassgpt",
-          "-pcompassgpt",
+          "-u${MYSQL_USER:-compassgpt}",
+          "-p${MYSQL_PASSWORD:-compassgpt}",
         ]
       interval: 10s
       timeout: 5s
@@ -30,6 +31,7 @@ services:
     build:
       context: ../Backend
       dockerfile: Dockerfile.dev
+    container_name: compassgpt-backend
     working_dir: /app
     volumes:
       - ../Backend:/app
@@ -39,7 +41,7 @@ services:
     command: npm run start:dev
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=mysql://compassgpt:compassgpt@db:3306/compassgpt_dev
+      - DATABASE_URL=mysql://${MYSQL_USER:-compassgpt}:${MYSQL_PASSWORD:-compassgpt}@db:3306/${MYSQL_DATABASE:-compassgpt_dev}
     depends_on:
       db:
         condition: service_healthy
@@ -48,6 +50,7 @@ services:
     build:
       context: ../Frontend
       dockerfile: Dockerfile.dev
+    container_name: compassgpt-frontend
     working_dir: /app
     volumes:
       - ../Frontend:/app
@@ -64,6 +67,7 @@ services:
     build:
       context: ../AI
       dockerfile: Dockerfile.dev
+    container_name: compassgpt-ai
     working_dir: /app
     volumes:
       - ../AI:/app
@@ -72,7 +76,7 @@ services:
     command: python3 main.py
     environment:
       - PYTHONUNBUFFERED=1
-      - DATABASE_URL=mysql://compassgpt:compassgpt@db:3306/compassgpt_dev
+      - DATABASE_URL=mysql://${MYSQL_USER:-compassgpt}:${MYSQL_PASSWORD:-compassgpt}@db:3306/${MYSQL_DATABASE:-compassgpt_dev}
     depends_on:
       db:
         condition: service_healthy
