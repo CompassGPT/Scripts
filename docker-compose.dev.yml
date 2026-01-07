@@ -37,7 +37,7 @@ services:
       - ../Backend:/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - "4001:3000"
     command: npm run start:dev
     environment:
       - NODE_ENV=development
@@ -56,12 +56,13 @@ services:
       - ../Frontend:/app
       - /app/node_modules
     ports:
-      - "5173:5173"
+      - "4000:5173"
     command: npm run dev -- --host
     environment:
       - NODE_ENV=development
     depends_on:
-      - backend
+      backend:
+        condition: service_started
 
   ai:
     build:
@@ -72,7 +73,7 @@ services:
     volumes:
       - ../AI:/app
     ports:
-      - "5000:5000"
+      - "4002:5000"
     command: python3 main.py
     environment:
       - PYTHONUNBUFFERED=1
