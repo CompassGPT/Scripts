@@ -1,72 +1,9 @@
-services:
-  db:
-    image: mysql:8
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: compassgpt
-      MYSQL_DATABASE: compassgpt_dev
-      MYSQL_USER: compassgpt
-      MYSQL_PASSWORD: compassgpt
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-ucompassgpt",
-          "-pcompassgpt",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  backend:
-    build:
-      context: ../Backend
-    working_dir: /app
-    volumes:
-      - ../Backend:/app
-    ports:
-      - "3000:3000"
-    command: npm run start:dev
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=mysql://compassgpt:compassgpt@db:3306/compassgpt_dev
-    depends_on:
-      db:
-        condition: service_healthy
-  frontend:
-    build:
-      context: ../Frontend
-    working_dir: /app
-    volumes:
-      - ../Frontend:/app
-    ports:
-      - "5173:5173"
-    command: npm run dev -- --host
-    environment:
-      - NODE_ENV=development
-    depends_on:
-      - backend
-  ai:
-    build:
-      context: ../AI
-    working_dir: /app
-    volumes:
-      - ../AI:/app
-    ports:
-      - "5000:5000"
-    command: python3 main.py
-    environment:
-      - PYTHONUNBUFFERED=1
-      - DATABASE_URL=mysql://compassgpt:compassgpt@db:3306/compassgpt_dev
-    depends_on:
-      db:
-        condition: service_healthy
-volumes:
-  db_data:
+# This file is deprecated - use docker-compose.dev.yml or docker-compose.prod.yml instead
+# For development:
+#   docker compose -f docker-compose.dev.yml up -d
+# For production:
+#   docker compose -f docker-compose.prod.yml up -d
+
+# Default to development configuration
+include:
+  - docker-compose.dev.yml

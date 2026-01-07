@@ -5,9 +5,9 @@
 set -e
 
 # Check if Docker Compose file exists
-if [ -f "../docker-compose.yml" ]; then
-  echo "[INFO] Starting all services with Docker Compose..."
-  docker compose -f ../docker-compose.yml up --build
+if [ -f "docker-compose.dev.yml" ]; then
+  echo "[INFO] Starting all services with Docker Compose (Development mode)..."
+  docker compose -f docker-compose.dev.yml up -d
   exit $?
 fi
 
